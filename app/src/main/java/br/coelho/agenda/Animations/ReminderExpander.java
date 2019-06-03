@@ -5,14 +5,9 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.support.v7.widget.CardView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -24,7 +19,7 @@ import android.widget.TextView;
 import br.coelho.agenda.Adapters.DataItem;
 import br.coelho.agenda.R;
 
-public class ReminderExpand {
+public class ReminderExpander {
 
     private Boolean ShowShortDescription = false;
 

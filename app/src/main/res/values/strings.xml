@@ -1,6 +1,25 @@
 <resources>
     <string name="app_name">Agenda</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Init Create Reminder -->
+    <string name="TextHintTag">Sua tag vem aqui.</string>
+
+    <string name="TextHintDescription">Sua descrição vem aqui!</string>
+
+    <string name="ConfirmationTitle">Apenas confirmando...</string>
+
+
+    <string name="ConfirmationDescription">Deseja salvar o lembrente nessa data?</string>
+
+    <string name="btnSave">Sim</string>
+
+    <string name="btnSaveAndSetHour">Colocar hora</string>
+
+    <string name="btnCancel">Cancelar</string>
+
+    <!-- End Create Reminder -->
+
+
+
+
 </resources>

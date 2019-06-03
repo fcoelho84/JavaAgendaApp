@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import br.coelho.agenda.Animations.ReminderExpand;
+import br.coelho.agenda.Animations.ReminderExpander;
 import br.coelho.agenda.R;
 
 public class BaseListReminder extends BaseAdapter {
@@ -74,7 +74,7 @@ public class BaseListReminder extends BaseAdapter {
 
         notificationDate.setText(item.getNotificationDate());
 
-        new ReminderExpand().setExpandable(v, item, ListContext);
+        new ReminderExpander().setExpandable(v, item, ListContext);
 
 
         return v;

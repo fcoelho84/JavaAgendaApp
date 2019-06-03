@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:id="@+id/root"
     tools:context=".Root">
 
     <android.support.design.widget.AppBarLayout
@@ -55,12 +56,12 @@
     <include layout="@layout/frame_content"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btnCalendar"
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:clickable="true"
-        android:src="@drawable/ic_arrow_up"
+        android:src="@drawable/ic_edit_black"
         app:backgroundTint="@color/colorAccent"
         app:fabSize="normal"
         app:layout_anchor="@id/appbar"

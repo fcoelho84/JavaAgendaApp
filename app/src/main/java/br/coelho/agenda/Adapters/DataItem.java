@@ -38,7 +38,13 @@ public class DataItem {
     }
 
     public String getShortDescrition() {
-        return Description.substring(0, 16);
+
+        if(Description.length() > 52) {
+
+            return Description.substring(0, 52);
+        }
+
+        return Description;
     }
 
 

@@ -1,12 +1,12 @@
 package br.coelho.agenda;
 
 import android.app.FragmentTransaction;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,19 +15,49 @@ import android.support.v7.widget.Toolbar;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 
 
-import br.coelho.agenda.Animations.CalendarCollapse;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import br.coelho.agenda.Adapters.AppBarStateChangedListener;
 import br.coelho.agenda.Pages.Reminders;
 
 public class Root extends AppCompatActivity {
 
+    // Privates
 
-    private CalendarCollapse CalendarCollapseAnim = new CalendarCollapse();
+    private static final String ACTION_PALLETE = "PALLETE_MODE";
+    private static final String ACTION_EDIT = "EDIT_MODE";
+
+    private Boolean isOpen = false;
+
+    private MenuItem MenuCalendar, MenuConfig, MenuDelete;
+
+    // Public static
+
+    public static SimpleDateFormat FormatDateTitle = new SimpleDateFormat("dd MMM. yyyy");
+
+    public static Toolbar MainToolbar;
+
+    public static AppBarLayout MainAppBar;
+
+    public static FloatingActionButton FabAction;
+
+    public static CompactCalendarView Calendar;
+
+
+    // Overrides
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
 
         inflater.inflate(R.menu.options_menu, menu);
+
+        MenuCalendar = menu.findItem(R.id.ic_calendar);
+
+        MenuConfig = menu.findItem(R.id.ic_config);
+
+        MenuDelete = menu.findItem(R.id.ic_delete);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -36,21 +66,13 @@ public class Root extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.ic_calendar:
+            case R.id.ic_calendar: handleCalendarAnim(); return true;
 
-                CalendarCollapseAnim.openCalendar();
+            case R.id.ic_config: return true;
 
+            case R.id.ic_delete: onClickDelete(); return true;
 
-                return true;
-
-            case R.id.ic_config:
-
-
-                return true;
-
-            default:
-
-                return super.onOptionsItemSelected(item);
+            default: return super.onOptionsItemSelected(item);
         }
     }
 
@@ -61,31 +83,105 @@ public class Root extends AppCompatActivity {
 
         setContentView(R.layout.activity_root);
 
-        CalendarCollapseAnim.setAnimation(
-                this,
-                ((FloatingActionButton) findViewById(R.id.btnCalendar)),
-                ((AppBarLayout) findViewById(R.id.appbar)),
-                ((Toolbar) findViewById(R.id.toolbar)),
-                ((CompactCalendarView) findViewById(R.id.calendar)),
-                ((ConstraintLayout) findViewById(R.id.Frame)));
+        MainToolbar = findViewById(R.id.toolbar);
 
+        setSupportActionBar(MainToolbar);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        MainAppBar = findViewById(R.id.appbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        FabAction = findViewById(R.id.fab);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        Calendar = findViewById(R.id.calendar);
+
+        onStateChangedSetTitleAppBar();
 
         openNewPage(new Reminders());
 
     }
 
-    private void openNewPage(Fragment page) {
+    // Methods Publics
+
+    public void toolbarMenuItemChanged() {
+
+        MenuCalendar.setVisible((MenuCalendar.isVisible()) ? false : true);
+
+        MenuConfig.setVisible((MenuConfig.isVisible()) ? false : true);
+
+        MenuDelete.setVisible((MenuDelete.isVisible()) ? false : true);
+    }
+
+    public void openNewPage(Fragment page) {
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.Frame, page);
+        transaction.replace(R.id.Frame, page, "FRAME_FRAG");
         transaction.commit();
 
+
+    }
+
+    // Methods Private
+
+    private void onStateChangedSetTitleAppBar() {
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+
+
+        MainAppBar.addOnOffsetChangedListener(new AppBarStateChangedListener() {
+            @Override
+            public void onStateChanged(AppBarLayout appBarLayout, State state) {
+
+                Log.e("TAG", getCurrentDisplayedFragment());
+
+                if(!getCurrentDisplayedFragment().equals("CreateReminder")) {
+
+                    if(state == State.COLLAPSED)
+
+                        MainToolbar.setTitle("Meus lembretes");
+
+                    else if(state == State.EXPANDED )
+
+                        MainToolbar.setTitle(FormatDateTitle.format(new Date()));
+
+                }
+            }
+        });
+    }
+
+    private void handleCalendarAnim() {
+
+        if(isOpen)
+            MainAppBar.setExpanded(true);
+        else
+            MainAppBar.setExpanded(false);
+
+        isOpen = (isOpen) ? false : true;
+    }
+
+    private void onClickDelete() {
+
+        openNewPage(new Reminders());
+
+        toolbarMenuItemChanged();
+
+        MainToolbar.setTitle("Meus lembretes");
+
+        FabAction.hide();
+
+        MainAppBar.setExpanded(false);
+    }
+
+    private String getCurrentDisplayedFragment() {
+
+        Fragment currentFrag = getFragmentManager().findFragmentByTag("FRAME_FRAG");
+
+        if (currentFrag != null && currentFrag.isVisible()) {
+
+            return currentFrag.getClass().getSimpleName();
+        }
+
+        return "";
 
     }
 
