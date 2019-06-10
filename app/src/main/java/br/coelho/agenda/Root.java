@@ -2,7 +2,6 @@ package br.coelho.agenda;
 
 import android.app.FragmentTransaction;
 import android.app.Fragment;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -11,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
-
+import com.github.clans.fab.FloatingActionButton;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 
 
@@ -19,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.coelho.agenda.Adapters.AppBarStateChangedListener;
+import br.coelho.agenda.Animations.CircularReveal;
+import br.coelho.agenda.Pages.CreateReminder;
 import br.coelho.agenda.Pages.Reminders;
 
 public class Root extends AppCompatActivity {
@@ -28,7 +29,7 @@ public class Root extends AppCompatActivity {
     private static final String ACTION_PALLETE = "PALLETE_MODE";
     private static final String ACTION_EDIT = "EDIT_MODE";
 
-    private Boolean isOpen = false;
+    private Boolean isOpen = false, ClosedAnim = false;
 
     private MenuItem MenuCalendar, MenuConfig, MenuDelete;
 
@@ -97,6 +98,8 @@ public class Root extends AppCompatActivity {
 
         openNewPage(new Reminders());
 
+
+
     }
 
     // Methods Publics
@@ -110,10 +113,15 @@ public class Root extends AppCompatActivity {
         MenuDelete.setVisible((MenuDelete.isVisible()) ? false : true);
     }
 
-    public void openNewPage(Fragment page) {
+    // Open the fragment inside a frame layout
+    public void openNewPage(Fragment fragemntPage) {
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.Frame, page, "FRAME_FRAG");
+
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
+        transaction.replace(R.id.Frame, fragemntPage, "FRAME_FRAG");
+        transaction.addToBackStack( getCurrentDisplayedFragment() );
         transaction.commit();
 
 
@@ -134,17 +142,32 @@ public class Root extends AppCompatActivity {
 
                 Log.e("TAG", getCurrentDisplayedFragment());
 
-                if(!getCurrentDisplayedFragment().equals("CreateReminder")) {
 
-                    if(state == State.COLLAPSED)
+
+                if(state == State.COLLAPSED) {
+
+                    if(!getCurrentDisplayedFragment().equals("CreateReminder")) {
 
                         MainToolbar.setTitle("Meus lembretes");
 
-                    else if(state == State.EXPANDED )
+                    }
+
+                    FabAction.hide(true);
+
+
+                }else if(state == State.EXPANDED ) {
+
+                    if(!getCurrentDisplayedFragment().equals("CreateReminder")) {
 
                         MainToolbar.setTitle(FormatDateTitle.format(new Date()));
 
+                    }
+
+                    FabAction.show(true);
+
                 }
+
+
             }
         });
     }
@@ -159,17 +182,31 @@ public class Root extends AppCompatActivity {
         isOpen = (isOpen) ? false : true;
     }
 
-    private void onClickDelete() {
+    public void onClickDelete() {
 
-        openNewPage(new Reminders());
+        CreateReminder.CircularAnim.close();
 
-        toolbarMenuItemChanged();
+        CreateReminder.CircularAnim.setAnimationListener(new CircularReveal.Listener() {
+            @Override
+            public void onAnimationEnd() {
 
-        MainToolbar.setTitle("Meus lembretes");
+                toolbarMenuItemChanged();
 
-        FabAction.hide();
+                MainToolbar.setTitle("Meus lembretes");
 
-        MainAppBar.setExpanded(false);
+                MainAppBar.setExpanded(false);
+
+                ClosedAnim = true;
+
+                onBackPressed();
+            }
+
+            @Override
+            public void onAnimationStart() {
+
+            }
+        });
+
     }
 
     private String getCurrentDisplayedFragment() {
@@ -185,5 +222,23 @@ public class Root extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+
+        if (getCurrentDisplayedFragment().equals("CreateReminder") && !ClosedAnim) {
+
+            onClickDelete();
+
+        } else {
+
+            ClosedAnim = false;
+
+            super.onBackPressed();
+
+        }
+
+    }
+
 
 }
+

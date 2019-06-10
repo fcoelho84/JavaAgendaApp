@@ -7,9 +7,8 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.Toast;
 
+import android.widget.ListView;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 
 import java.util.ArrayList;
@@ -29,13 +28,25 @@ public class Reminders extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view  = inflater.inflate(R.layout.page_reminders, container, false);
 
-        setFabAction(((Root)getActivity()));
+        final Root root = (Root)getActivity();
+
+        root.FabAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            root.openNewPage(new CreateReminder());
+
+            root.MainToolbar.setTitle("Qual é a data do lembrete?");
+
+            root.toolbarMenuItemChanged();
+
+            }
+        });
 
         onClickCalendarDate();
 
         Root.FabAction.setImageDrawable(ContextCompat.getDrawable(this.getActivity(), R.drawable.ic_edit_black));
 
-        Root.FabAction.show();
 
         ReminderList = view.findViewById(R.id.ReminderList);
 
@@ -75,7 +86,6 @@ public class Reminders extends Fragment {
 
         ListItem.add(item);
 
-
         ReminderList.setAdapter(new BaseListReminder(ListItem, this.getActivity()));
 
         ReminderList.setNestedScrollingEnabled(true);
@@ -85,24 +95,6 @@ public class Reminders extends Fragment {
     }
 
 
-    private void setFabAction(final Root instance) {
-        instance.FabAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                instance.openNewPage(new CreateReminder());
-
-                instance.MainToolbar.setTitle("Qual é a data do lembrete?");
-
-                instance.toolbarMenuItemChanged();
-
-                instance.FabAction.hide();
-
-
-
-            }
-        });
-    }
 
 
     private void onClickCalendarDate() {
