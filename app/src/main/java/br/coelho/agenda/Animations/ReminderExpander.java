@@ -1,10 +1,12 @@
 package br.coelho.agenda.Animations;
 
+import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.v7.widget.CardView;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
@@ -38,7 +40,7 @@ public class ReminderExpander {
 
         anim.setInterpolator(new DecelerateInterpolator());
 
-        anim.setDuration(300);
+        anim.setDuration(400);
 
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -50,11 +52,12 @@ public class ReminderExpander {
             }
         });
 
-
         anim.start();
 
 
     }
+
+
 
 
     private void startSpinIco(final int fromDegree, final int toDegree) {
@@ -113,7 +116,7 @@ public class ReminderExpander {
     }
 
 
-    public void setExpandable(View reminderView, final DataItem item, Context ctx) {
+    public void setExpandable(final View reminderView, final DataItem item, Context ctx) {
 
         Description = reminderView.findViewById(R.id.Description);
 
@@ -128,6 +131,7 @@ public class ReminderExpander {
             @Override
             public void onClick(View v) {
 
+                new Fade().fadeBlink(Description, 400);
 
                 if(ShowShortDescription) {
 
@@ -138,7 +142,6 @@ public class ReminderExpander {
                     startExpandableAnim(FullDescriptionHeight, ShortDescriptionHeight);
 
                     startSpinIco(180, 360);
-
                 }
                 else {
 
@@ -149,9 +152,9 @@ public class ReminderExpander {
                     startExpandableAnim(ShortDescriptionHeight, FullDescriptionHeight);
 
                     startSpinIco(0, 180);
-
-
                 }
+
+
             }
         });
 

@@ -29,13 +29,13 @@ public class Root extends AppCompatActivity {
     private static final String ACTION_PALLETE = "PALLETE_MODE";
     private static final String ACTION_EDIT = "EDIT_MODE";
 
-    private Boolean isOpen = false, ClosedAnim = false;
-
     private MenuItem MenuCalendar, MenuConfig, MenuDelete;
 
     // Public static
 
     public static SimpleDateFormat FormatDateTitle = new SimpleDateFormat("dd MMM. yyyy");
+
+    public static Boolean ToolbarIsOpen = false, ClosedAnim = false;
 
     public static Toolbar MainToolbar;
 
@@ -71,7 +71,7 @@ public class Root extends AppCompatActivity {
 
             case R.id.ic_config: return true;
 
-            case R.id.ic_delete: onClickDelete(); return true;
+            case R.id.ic_delete: onClickCloseWithAnim(); return true;
 
             default: return super.onOptionsItemSelected(item);
         }
@@ -97,6 +97,7 @@ public class Root extends AppCompatActivity {
         onStateChangedSetTitleAppBar();
 
         openNewPage(new Reminders());
+
 
 
 
@@ -135,14 +136,11 @@ public class Root extends AppCompatActivity {
 
         getSupportActionBar().setDisplayShowHomeEnabled(false);
 
-
         MainAppBar.addOnOffsetChangedListener(new AppBarStateChangedListener() {
             @Override
             public void onStateChanged(AppBarLayout appBarLayout, State state) {
 
                 Log.e("TAG", getCurrentDisplayedFragment());
-
-
 
                 if(state == State.COLLAPSED) {
 
@@ -153,6 +151,8 @@ public class Root extends AppCompatActivity {
                     }
 
                     FabAction.hide(true);
+
+                    ToolbarIsOpen = false;
 
 
                 }else if(state == State.EXPANDED ) {
@@ -165,6 +165,8 @@ public class Root extends AppCompatActivity {
 
                     FabAction.show(true);
 
+                    ToolbarIsOpen = true;
+
                 }
 
 
@@ -174,15 +176,12 @@ public class Root extends AppCompatActivity {
 
     private void handleCalendarAnim() {
 
-        if(isOpen)
-            MainAppBar.setExpanded(true);
-        else
-            MainAppBar.setExpanded(false);
+        ToolbarIsOpen = (ToolbarIsOpen) ? false : true;
 
-        isOpen = (isOpen) ? false : true;
+        MainAppBar.setExpanded(ToolbarIsOpen);
     }
 
-    public void onClickDelete() {
+    public void onClickCloseWithAnim() {
 
         CreateReminder.CircularAnim.close();
 
@@ -227,7 +226,7 @@ public class Root extends AppCompatActivity {
 
         if (getCurrentDisplayedFragment().equals("CreateReminder") && !ClosedAnim) {
 
-            onClickDelete();
+            onClickCloseWithAnim();
 
         } else {
 

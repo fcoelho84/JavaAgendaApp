@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -121,8 +122,11 @@ public class CircularReveal {
     private void startCircularRevealAnim() {
 
 
+        int value = (int)(ScreenWidth * 11.35) / 100;
+
+
         Animator anim = ViewAnimationUtils
-                .createCircularReveal(layoutRevealForAnim, ScreenWidth - 100, 0 , StartRadius, EndRadius);
+                .createCircularReveal(layoutRevealForAnim, ScreenWidth - value, 0 , StartRadius, EndRadius);
 
         anim.setDuration(800);
 
@@ -188,7 +192,10 @@ public class CircularReveal {
 
         }else {
 
-            Root.FabAction.show(true);
+            if(Root.ToolbarIsOpen) {
+                Root.FabAction.show(true);
+            }
+
             listener.onAnimationEnd();
         }
 

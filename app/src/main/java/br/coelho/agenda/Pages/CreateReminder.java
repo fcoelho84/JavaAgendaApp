@@ -1,17 +1,15 @@
 package br.coelho.agenda.Pages;
 
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.constraint.ConstraintLayout;
+import android.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
@@ -19,6 +17,7 @@ import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import java.util.Date;
 
 import br.coelho.agenda.Animations.CircularReveal;
+import br.coelho.agenda.Pages.Dialogs.ReminderConfirmation;
 import br.coelho.agenda.R;
 import br.coelho.agenda.Root;
 
@@ -96,35 +95,11 @@ public class CreateReminder extends Fragment {
 
     private void openDialogConfirmation(String dateClicked) {
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+        ReminderConfirmation dialog = ReminderConfirmation.newInstance(dateClicked);
 
-        View view = this.getActivity().getLayoutInflater().inflate(R.layout.dialog_confirmation_create_reminder, null);
+        FragmentManager fm = getActivity().getFragmentManager();
 
-        ((TextView) view.findViewById(R.id.DateConfirmText)).setText(dateClicked);
-
-        builder.setView(view);
-
-        final Dialog dialog = builder.create();
-
-        (view.findViewById(R.id.Yes)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Root root = (Root)getActivity();
-
-                dialog.dismiss();
-
-                root.onClickDelete();
-            }
-        });
-
-        (view.findViewById(R.id.CloseDialog)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
+        dialog.show(fm, "ReminderConfirmation");
 
     }
 
